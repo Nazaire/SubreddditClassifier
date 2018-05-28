@@ -2,7 +2,7 @@ import requests
 import time
 import pprint
 
-SUICIDEWATCH = "https://api.pushshift.io/reddit/search/submission/?size=500&stickied=false&subreddit=suicidewatch&before={}"
+SUICIDEWATCH = "https://api.pushshift.io/reddit/search/submission/?size=500&stickied=false&subreddit=pics&before={}"
 
 
 def write_to_file(out_file, body):
@@ -25,8 +25,13 @@ with open("data/suicidal.txt", "w") as out_file:
 
         for submission in res['data']:
             try:
+                pprint.pprint(submission)
                 last = submission['created_utc']
-                write_to_file(out_file, submission['selftext'])
+                #write_to_file(out_file, submission['selftext'])
                 print("{} OK".format(submission['url']))
+
+                #exit()
             except Exception as ex:
-                print("{} FAIL".format(submission['url']))
+                print("{} FAIL".format(submission['url']), ex)
+
+
