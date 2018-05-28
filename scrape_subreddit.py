@@ -15,12 +15,10 @@ LABEL = "suicidal"
 URL = "https://api.pushshift.io/reddit/search/submission/?size=500&stickied=false&subreddit={}"
 FILE_NAME = "data/{}.txt"
 
-def write_to_file(out_file, body):
-    for line in body.split("\n"):
-        line = line.rstrip()
-        if len(line) > 0:
-            line = "__label__{} {}\n".format(LABEL, line)
-            out_file.write(line)
+def write_to_file(out_file, text):
+    if len(text) > 0:
+        line = "__label__{} {}\n".format(LABEL, text)
+        out_file.write(line)
 
 def get_more(before=int(time.time())):
     url = URL.format(before)
@@ -52,11 +50,12 @@ if __name__ == "__main__":
                         # pprint.pprint(submission)
                         last = submission['created_utc']
 
+
                         body = None
                         if submission['is_self']:
 
                             # Skip [removed] and [deleted]
-                            if submission['selftext'] == "[removed]" or submission == "[deleted]":
+                            if submission['selftext'] == "[removed]" or submission['selftext'] == "[deleted]":
                                 continue
 
                             body = submission['title'] + " " + submission['selftext']
@@ -64,12 +63,11 @@ if __name__ == "__main__":
                             u = urlparse(submission['url'])
                             body = submission['title'] + " " + u.netloc
 
-                        print(body)
+                        body = body.replace("\n", " ")
                         write_to_file(out_file, body)
 
                         print("{} OK".format(submission['full_link']))
 
-                        # exit()
                     except UnicodeEncodeError as ex:
                         print("UnicodeEncodeError", submission['id'])
                     except Exception as ex:
